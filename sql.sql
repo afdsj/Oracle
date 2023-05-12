@@ -9,7 +9,7 @@
 4: HAVING 그룹을 식별하기 위한 조건식 (그룹에 조건을 줄때 사용을 하는구나~)
 6: ORDER BY 컬럼명 | 별칭 | 컬럼순번 정렬방식 ([ASC] | [DESC] [NULLS FIRST | LAST])
 */
-
+ 
 SELECT
         DEPT_CODE
       , COUNT(*) AS "사원수" -- 부서코드 카운트를 셀거야
@@ -226,7 +226,4 @@ SELECT EMP_ID
      , SALARY
   FROM EMPLOYEE
  WHERE SALARY > 3000000;
-       
-
-
 
