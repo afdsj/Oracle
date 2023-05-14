@@ -14,7 +14,7 @@ SELECT
         DEPT_CODE
       , COUNT(*) AS "사원수" -- 부서코드 카운트를 셀거야
    FROM EMPLOYEE -- 조회할거야
-  GROUP BY DEPT_CODE; -- 부서코드를 기준으로 묶을거야
+  GROUP BY DEPT_CODE -- 부서코드를 기준으로 묶을거야
   ORDER BY DEPT_CODE ASC;
   
 SELECT COUNT(*) FROM EMPLOYEE;

@@ -112,7 +112,7 @@ SELECT
      , EMP_NAME
      , DEPT_CODE
   FROM EMPLOYEE
--- WHERE DEPT_CODE<> 'D9'
+-- WHERE DEPT_CODE<> 'D9';
 -- WHERE DEPT_CODE != 'D9;
  WHERE DEPT_CODE ^= 'D9';
  
@@ -140,9 +140,9 @@ SELECT
  
  -- LIKE 연산자 : 문자 패턴이 일치하는 값을 조회할 때 사용
  -- 컬럼명 LIKE : '문자패턴'
- --                    '문자%'    (문자로 시작하는 값)
- --                    '%문자%' (문자를 포함하는 값)
- --                    '%문자'    (문자로 끝나는 값)
+ --              '문자%'  (문자로 시작하는 값)
+ --              '%문자%' (문자를 포함하는 값)
+ --              '%문자'  (문자로 끝나는 값)
  SELECT
         EMP_ID
       , EMP_NAME
@@ -150,13 +150,14 @@ SELECT
    FROM EMPLOYEE
  WHERE NOT EMP_NAME LIKE '김%';
  
+ 
  /* 와일드 카드 _*/
  SELECT
         EMP_ID
       , EMP_NAME
       , PHONE
    FROM EMPLOYEE
- WHERE PHONE LIKE '___9%'; --숫자중에 중간에 9가 들어가 있을때 조회 하고 싶으면 ___ 사용하기
+ WHERE PHONE LIKE '___7%'; --숫자중에 중간에 9가 들어가 있을때 조회 하고 싶으면 ___ 사용하기
  
  SELECT
         EMP_ID
@@ -164,14 +165,21 @@ SELECT
       , EMAIL
    FROM EMPLOYEE
  WHERE EMAIL LIKE '___#_%' ESCAPE '#'; -- ESCAPE 문자는 식별하기 위해서 설정하는 것 #이 아니여도 되는데 통상적임 /가 이스케이프문
- 
+
+
+SELECT
+      EMP_NAME
+    , EMAIL
+ FROM EMPLOYEE
+WHERE EMAIL LIKE '__#_%' ESCAPE '#';
  -- IN 연산자 : 비교하려는 값 목록에 일치하는 값이 있는지 확인
  SELECT
         EMP_ID
       , DEPT_CODE
       , SALARY
    FROM EMPLOYEE
- WHERE DEPT_CODE IN ('D6', 'D8');
+  WHERE NOT DEPT_CODE IN ('D6', 'D8');
+ 
  
  /* 연산자 우선순위
  1. 산술 연산자
