@@ -72,7 +72,7 @@ SELECT
   WHERE SALARY > 3000000
   GROUP BY DEPT_CODE
   ORDER BY 1; 
--- 단일 오류 ( 
+-- 단일 오류 
 
 -- 부서별 그룹의 급여 합계가 9백만원을 초과하는 부서의 부서코드와 급여 합계 조회
 SELECT
@@ -158,7 +158,7 @@ SELECT
  GROUP BY CUBE(DEPT_CODE, JOB_CODE)
  ORDER BY 1;
  
--- SET OPERATION(집합연산)
+-- SET OPERATION(집합연산자)
 -- UNION : 여러 개의 쿼리 결과를 하나로 합치는 연산자이다
 --         중복된 영역을 제외하여 하나로 합친다
 SELECT
@@ -194,7 +194,7 @@ SELECT
    FROM EMPLOYEE
   WHERE SALARY > 3000000;
   
-  -- INTERECT 1 : 여러 개의 SELECT 한 결과에서 공통 부부만 추출 수학에서의 교집합과 비슷하다
+  -- INTERECT : 여러 개의 SELECT 한 결과에서 공통 부부만 추출 수학에서의 교집합과 비슷하다
 SELECT
         EMP_ID
       , EMP_NAME
@@ -227,3 +227,14 @@ SELECT EMP_ID
   FROM EMPLOYEE
  WHERE SALARY > 3000000;
 
+SELECT
+       DEPT_CODE
+     , JOB_CODE
+     , MANAGER_ID
+     , FLOOR(AVG(SALARY))
+  FROM EMPLOYEE
+ GROUP BY GROUPING SETS ((DEPT_CODE, JOB_CODE, MANAGER_ID)
+                       , (DEPT_CODE, MANAGER_ID)
+                       , (JOB_CODE, MANAGER_ID)
+                       );
+                    
