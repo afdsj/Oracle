@@ -42,7 +42,7 @@ SELECT
                        FROM EMPLOYEE E2
                     );
                     
--- 서브쿼리의 유형 (= 스칼라 서브쿼리, SELECT,FROM,WHERE절에서 사용 가능)
+-- 서브쿼리의 유형 (= 스칼라 서브쿼리)
 -- 서브쿼리 유형에 따라 서브쿼리 앞에 붙는 연산자가 다르다
 /*단일행 서브쿼리 : 쿼리 결과가 단일행만을 반환하는 서브쿼리
 단일행 서브쿼리 앞에는 일반 비교 연산자 사용 가능
@@ -366,7 +366,6 @@ SELECT
 2. 부서명은 내림차순 정렬
 3. ORDER BY절에서 서브쿼리 이용
 */
---1. 모든 직원
 SELECT
         E.EMP_ID,
         E.EMP_NAME,
@@ -376,3 +375,47 @@ SELECT
                    D.DEPT_TITLE
               FROM DEPARTMENT D
              WHERE E.DEPT_CODE = D.DEPT_ID) DESC;
+/* ORDER BY절에서 스칼라 서브쿼리 이용
+모든 직원의 사번, 이름, 소속부서 조회
+단 부서지역명 내림차순 정렬
+
+1. 모든 직원의 사번,이름,소속부서 조회
+2. 조건1)ORDER BY절에서 스칼라 서브쿼리 이용 
+3. 조건2)부서지역명 내림차순 정렬
+*/
+
+SELECT
+        E.EMP_ID,
+        E.EMP_NAME,
+        D.DEPT_TITLE
+   FROM EMPLOYEE E
+   JOIN DEPARTMENT D ON(E.DEPT_CODE = D.DEPT_ID)
+  ORDER BY (SELECT
+                   L.LOCAL_NAME
+              FROM LOCATION L
+             WHERE L.LOCAL_CODE = D.LOCATION_ID) DESC;
+
+/*회사에서 매니저 활동중인 직원들에게 추가 보너스 0.5%를 지급하고자 한다
+조회는 다음과 같다.
+1. 사원 아이디
+2. 사원 이름
+3. 관리 직원수
+4. 인상된 보너스
+단 관리직원이 없는 직원은 제외된다
+정렬은 관리직원이 많은 순서로 정렬한다
+*/
+SELECT
+        V.EMP_ID,
+        V.EMP_NAME,
+        V.관리직원수,
+        V."인상된 보너스"
+   FROM (SELECT --가상의 테이블 생성
+                E.EMP_ID,
+                E.EMP_NAME,
+                (SELECT COUNT(*) -- 서브쿼리 생성 
+                   FROM EMPLOYEE E2
+                  WHERE E.EMP_ID = E2.MANAGER_ID) AS "관리직원수",
+                NVL((E.BONUS + 0.5), 0.5) AS "인상된 보너스"
+           FROM EMPLOYEE E) V
+   WHERE 관리직원수 > 0
+   ORDER BY 관리직원수 DESC;
