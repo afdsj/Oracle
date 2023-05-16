@@ -98,7 +98,7 @@ SELECT
  WHERE D.LOCATION_ID = L.LOCAL_CODE;
  
  /* 조인의 기본이 EQUAL JOIN이다 (EQU JOIN이라고도 한다. = 등가조인)
- 일치하는 값이 없는 행은 조인에서 제외하는 것을 INNER JOIN일고 한다.(NULL값은 조인에서 제외)
+ 일치하는 값이 없는 행은 조인에서 제외하는 것을 INNER JOIN이라고 한다.(NULL값은 조인에서 제외)
  
  JOIN의 기본은 INNER JOIN & EQUAL JOIN이다 (같은것만 조회해서 가져온다)
  OUTER JOIN : 두 테이블의 지정하는 컬럼 값이 일치하지 않는 행도(NULL 값을 가진행)
@@ -197,7 +197,7 @@ SELECT
      , SAL_GRADE S
  WHERE SALARY BETWEEN MIN_SAL AND MAX_SAL;
 
- -- SELF JOIN l 동일한 테이블을 조인하는 것 (자가조인)
+ -- SELF JOIN : 동일한 테이블을 조인하는 것 (자가조인)
  -- ANSI
  SELECT                       
         E1.EMP_ID
