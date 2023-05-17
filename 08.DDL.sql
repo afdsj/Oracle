@@ -36,7 +36,7 @@ DESC MEMBER;
 -- 제약조건
 -- 테이블 정의 시 각 컬럼에 대한 값을 넣을 수 있는 조건을 설정할 수 있다.
 -- 데이터 무결성 보장을 목적으로 한다
--- PRIBARY KEY, NOT NULL, UNIQUE, CHECK, FOREIGN KEY
+-- PRIMARY KEY, NOT NULL, UNIQUE, CHECK, FOREIGN KEY
 -- NOT NULL : 해당 컬럼에 NULL 값을 허용하지 않는 제약조건 컬럼레벨에서 제한
 
 CREATE TABLE USER_NOCNS(
@@ -88,7 +88,7 @@ SELECT
     
 SELECT
         UC.*
-    FROM USER_CONSTRAINTS UC;
+    FROM USER_CONSTRAINTS UC; --제약조건이 걸어져 있는 시스템이 기본적으로 있다 (클래스에 있음)
     
 SELECT
         UCC.*
@@ -113,7 +113,7 @@ SELECT
   WHERE UC.TABLE_NAME = 'USER_NOTNULL';
 
 -- UNIQUE 제약조건 : 컬럼 입력값에 대해 기존에 존재하는 값과 중복된 값이 들어갈 수 없도록 제한을 거는
---                 제약조건 컬럼레벨에서 설정 가능, 테이블 레벨에서 설정가능
+--                  제약조건 컬럼레벨에서 설정 가능, 테이블 레벨에서 설정가능
 -- UNIQUE : 
 SELECT
        UN.*
@@ -238,3 +238,267 @@ INSERT
     2, 'USER01', 'PASS01',
     '홍길동', '남자', '010-2323-3434', 'HONE123@GMAIL.COM'
     );
+
+SELECT --제약조건 
+        UC.TABLE_NAME ,
+        UCC.COLUMN_NAME ,
+        UC.CONSTRAINT_NAME ,
+        UC.CONSTRAINT_TYPE
+   FROM USER_CONSTRAINTS UC
+   JOIN USER_CONS_COLUMNS UCC ON (UC.CONSTRAINT_NAME = UCC.CONSTRAINT_NAME)
+  WHERE UC.CONSTRAINT_NAME = 'PK_USER_NO';
+  
+CREATE TABLE USER_PRIMARYKEY2( --프라이머리키2 만들고 필드 정의   
+ USER_NO NUMBER,                  
+ USER_ID VARCHAR2(20),
+ USER_PWD VARCHAR2(30) NOT NULL,
+ USER_NAME VARCHAR2(30),
+ GENDER VARCHAR2(10),
+ PHONE VARCHAR2(30),
+ EMAIL VARCHAR2(50),
+ CONSTRAINT PK_USER_NO2 PRIMARY KEY(USER_NO, USER_ID) 
+);
+
+SELECT --제약조건                       
+        UC.TABLE_NAME ,            
+        UCC.COLUMN_NAME ,
+        UC.CONSTRAINT_NAME ,
+        UC.CONSTRAINT_TYPE
+   FROM USER_CONSTRAINTS UC 
+   JOIN USER_CONS_COLUMNS UCC ON (UC.CONSTRAINT_NAME = UCC.CONSTRAINT_NAME)
+  WHERE UC.CONSTRAINT_NAME = 'PK_USER_NO2';
+  
+/* 
+FOREIGN KEY (외래키 / 외부키 / 참조무결성 제약조건) : 
+참조(REFERENCES)된 다른 테이블에서 제공하는 값만 사용할 수 있음
+참조 무결성을 위배하지 않게 하기 위해 사용한다.
+FOREIGN KEY 제약조건에 의해서 테이블간의 관계(RELATIONSHIP)이 형성된다
+제공되는 값 외에는 NULL을 사용할 수 있다 (이부분 중요 : 제공 되는 테이터를 제외하고 아무 값을 넣을 수 없다 물어보기 !)
+선행해서 데이터가 들어가야 하는 테이블을 부모테이블 나중에 참조하여 데이터를 넣는 테이블은 자식 테이블이라고 한다
+
+컬럼 레벨인 경우
+컬럼명 자료형(크기) [CONSTRAINT 제약조건이름] REFERENCES 참조할테이블명 [(참조할 컬럼)] [삭제룰]
+
+테이블 레벨인 경우
+[CONSTRAINT 이름] FOREIGH KEY(적용할 컬럼명) REFERENCES 참조할테이블명 [(참조할 컬럼)] [삭제룰]
+
+참조할 테이블의 참조할 컬럼명이 생략되면 PRIMARY KEY로 설정된 컬럼이 자동으로 참조할 컬럼이 된다
+참조될 수 있는 컬럼은 PRIMARY KEY 컬럼과 UNIQUE 컬럼만 외래키로 차모할 수 있다*/
+
+CREATE TABLE USER_GREADE(
+  GREADE_CODE NUMBER PRIMARY KEY,
+  GREADE_NAME VARCHAR2(30) NOT NULL -- 자료형의 크기
+);
+
+INSERT INTO USER_GREADE (GREADE_CODE, GREADE_NAME) VALUES (10, '일반회원');
+INSERT INTO USER_GREADE (GREADE_CODE, GREADE_NAME) VALUES (20, '우수회원');
+INSERT INTO USER_GREADE (GREADE_CODE, GREADE_NAME) VALUES (30, '특별회원');
+
+SELECT * FROM USER_GREADE;
+
+COMMIT;
+
+CREATE TABLE USER_FOREINGKEY(
+  USER_NO NUMBER PRIMARY KEY, --중복 될 수 없고 기본 식별키
+  USER_ID VARCHAR2(20) UNIQUE, --유니크 제약조건
+  USER_PWD VARCHAR2(30) NOT NULL, -- NOT NULL 제약 조건
+  USER_NAME VARCHAR2(30),
+  GENDER VARCHAR2(10),
+  PHONE VARCHAR2(30),
+  EMAIL VARCHAR2(50),
+  GREADE_CODE NUMBER,
+  CONSTRAINT FK_GREADE_CODE FOREIGN KEY (GREADE_CODE) REFERENCES USER_GREADE (GREADE_CODE)
+); 
+--제약조건 총 4가지 PRIMARY KEY, UNIQUE, NOT NULL, FOREIGN KEY
+-- FK_GREADE_CODE의 제약 조건은 
+
+--값을 넣어준거야 (필드값을 따로 입력하지 않아도 우리가 입력한 순서대로 필드에 값이 들어간다(자동생략))
+INSERT INTO USER_FOREINGKEY VALUES(1, 'USER01', 'PASS01', '이순신', '남', '010-2323-2323-', 'ASDF@GMAIL.COM', 10);
+INSERT INTO USER_FOREINGKEY VALUES(2, 'USER02', 'PASS02', '홍길동', '남', '010-2323-2323-', 'ASDF@GMAIL.COM', 20);
+INSERT INTO USER_FOREINGKEY VALUES(3, 'USER03', 'PASS03', '유관순', '여', '010-2323-2323-', 'ASDF@GMAIL.COM', 30);
+INSERT INTO USER_FOREINGKEY VALUES(4, 'USER04', 'PASS04', '안중근', '남', '010-2323-2323-', 'ASDF@GMAIL.COM', 10);
+INSERT INTO USER_FOREINGKEY VALUES(5, 'USER05', 'PASS05', '임꺽정', '남', '010-2323-2323-', 'ASDF@GMAIL.COM', 20);
+INSERT INTO USER_FOREINGKEY VALUES(6, 'USER06', 'PASS06', '강감찬', '남', '010-2323-2323-', 'ASDF@GMAIL.COM', NULL);
+-- 부모키 없어서 무결성 제약 조건 위배 (참조할 값이 없어서 위배 되었다)
+INSERT INTO USER_FOREINGKEY VALUES(7, 'USER06', 'PASS06', '강감찬', '남', '010-2323-2323-', 'ASDF@GMAIL.COM', 40); 
+
+/*
+트랜잭션
+데이터베이스의 상태를 변화시키기 위해 수행하는 작업 단위의 상태를 변화시키는 것
+(오류가 났을 경우 취소 하는 거)
+롤백 : 과거로 되돌리는 것
+*/
+COMMIT; --데이터베이스에 트랜잭션을 반영 시켜줌 
+
+SELECT * FROM USER_FOREINGKEY; --반영한 값을 조회
+
+/*
+ CONSTRAINT_TYPE (제약조건의 타입)
+ P : PRIMARY KEY
+ R : FOREIGN KEY
+ U : UNIQUE
+ C : CHECK, NOT NULL
+ 무결성 제약조건은 5개이지만 유형이 4가지로 분류되는 이유는 NOT NULL과 CHECK제약조건을 모두 C로 표현하기 때문이다
+ NULL 제약 조건은 컬럼에 NOT NULL 조건을 체크할지 말지를 결정하기 때문에 CHECK를 나타내는 C로 표현한 것으로 이해하면 된다
+ 
+ 또 각각의 제약 조건 유형은 제약 조건의 이니셜로 표현되지만 FOREIGN KEY만은 R로 표현되는데 
+ 이는 FOREIGN KEY는 참조 무결성을 지켜야 하기 때문에 참조(REFERENCE) 무결성(INTEGRITY)의 
+ 이니셜인 R을 FOREIGN KEY의 제약조건 유형으로 지정한다
+ 
+ 무결성 : 데이터의 정확한 일관성을 나타낸다
+         즉 데이터의 결함이 없는 상태, 데이터를 정확하고 일관되게 유지하는 것을 의미한다
+ 무결성 제약조건 : 데이터베이스의 정확성, 일관성을 보장하기 위해 저장, 삭제, 수정등을 제약하기 위한 조건을 뜻한다
+ 주요 목적으로 데이터베이스에 저장된 데이터의 무결성을 보장하고 데이터베이스의 상태를 일관되게 유지하는 것이다
+ 
+ 개체 무결성 : 각 릴레이션의 기본키를 구성하는 속성은 널(NULL) 값이나 중복된 값을 가질 수 없다 (EX.널은 목차가 없기 때문에 넣을수 없다)
+ 참조 무결성 : 외래키 값은 NULL이거나 참조하는 릴레이션의 기본키 값과 동일해야 한다
+             즉 각 릴레이션은 참조할 수 없는 외래키 값을 가질수 없다 
+ */
+ 
+ -- 제한조건을 찾기!
+SELECT
+        UC.TABLE_NAME ,
+        UCC.COLUMN_NAME ,
+        UC.CONSTRAINT_NAME ,
+        UC.CONSTRAINT_TYPE
+   FROM USER_CONSTRAINTS UC ,
+        USER_CONS_COLUMNS UCC
+  WHERE UC.CONSTRAINT_NAME = UCC.CONSTRAINT_NAME
+    AND UC.CONSTRAINT_NAME = 'FK_GREADE_CODE';
+    
+SELECT
+        UF.USER_ID,
+        UF.USER_NAME,
+        UF.GENDER,
+        UF.PHONE,
+        UG.GREADE_NAME 
+   FROM USER_FOREINGKEY UF
+NATURAL LEFT JOIN USER_GREADE UG;
+
+-- 삭제 옵션
+-- : 부모 테이블의 데이터 삭제 시 자식 테이블의 데이터를 어떤 식으로 처리할 지에 대한 내용을 설정하는 옵션
+-- ON DELETE RESTRICT : 참조되고 있는 값 삭제 불가(기본값)
+-- ON DELETE SET NULL : 참조하고 있는 행 삭세 시 참조하는 컬럼을 NULL로 변경
+-- ON DELETE CASCADE : 참조하고 있는 행 삭제 시 참조하는 컬럼을 가진 행 삭제
+
+COMMIT;
+
+DELETE -- 자식 레코드가 있어서 삭제 불가능, 값이 제거되지 않음
+  FROM USER_GREADE
+ WHERE GREADE_CODE = 10;
+
+DELETE -- 자식 레코드가 있어서 삭제 불가능, 값이 제거되지 않음
+  FROM USER_GREADE
+ WHERE GREADE_CODE = 20;
+
+SELECT
+        UG.*
+  FROM USER_GREADE UG;
+
+ROLLBACK; --컨트롤Z랑 비슷함 되돌려준다
+
+CREATE TABLE USER_GREADE2(
+    GREADE_CODE NUMBER PRIMARY KEY,
+    GREADE_NAME VARCHAR2(30) NOT NULL
+);
+
+INSERT INTO USER_GREADE2 VALUES(10, '일반회원');
+INSERT INTO USER_GREADE2 VALUES(20, '우수회원');
+INSERT INTO USER_GREADE2 VALUES(30, '특별회원');
+
+SELECT * FROM USER_GREADE2;
+
+CREATE TABLE USER_FOREIGNKEY2(
+  USER_NO NUMBER PRIMARY KEY,
+  USER_ID VARCHAR2(20) UNIQUE,
+  USER_PWD VARCHAR2(30) NOT NULL,
+  USER_NAME VARCHAR2(30),
+  GENDER VARCHAR2(10),
+  PHONE VARCHAR2(30),
+  EMAIL VARCHAR(50),
+  GREADE_CODE NUMBER,
+  CONSTRAINT FK_GREADE_CODE2 FOREIGN KEY (GREADE_CODE)
+  REFERENCES USER_GREADE2 (GREADE_CODE) ON DELETE SET NULL --조건 옵션으로 설정 ON()밑에 필드의 값이 널로 바뀜
+);
+
+INSERT INTO USER_FOREIGNKEY2 VALUES(1,'USER01','PASS01', '홍길동', '남', '010-2323-2323', 'HONE@GMAIL.COM', 10);
+INSERT INTO USER_FOREIGNKEY2 VALUES(2,'USER02','PASS02', '길동', '남', '010-2323-2323', 'NE@GMAIL.COM', 10);
+INSERT INTO USER_FOREIGNKEY2 VALUES(3,'USER03','PASS03', '동', '남', '010-2323-2323', 'ONE@GMAIL.COM', 10);
+
+SELECT * FROM USER_FOREIGNKEY2; -- 삭제하면 널로 바뀜
+
+DELETE FROM USER_GREADE2 WHERE GREADE_CODE = 10;
+
+-- ON DELETE CASCADE
+CREATE TABLE USER_GREADE3(
+  GRADE_CODE NUMBER PRIMARY KEY,
+  GRADE_NAME VARCHAR2(30) NOT NULL
+);
+
+INSERT INTO USER_GREADE3 VALUES(10, '일반회원');
+INSERT INTO USER_GREADE3 VALUES(20, '우수회원');
+INSERT INTO USER_GREADE3 VALUES(30, '특별회원');
+
+SELECT * FROM USER_GREADE3;
+
+CREATE TABLE USER_FOREIGNKEY3(
+ USER_NO NUMBER PRIMARY KEY,
+ USER_ID VARCHAR2(20) UNIQUE,
+ USER_PWD VARCHAR2(30) NOT NULL,
+ USER_NAME VARCHAR2(30),
+ GENDER VARCHAR2(10),
+ PHONE VARCHAR2(30),
+ EMAIL VARCHAR2(50),
+ GRADE_CODE NUMBER,
+ CONSTRAINT FK_GRADE_CODE3 FOREIGN KEY (GRADE_CODE)
+ REFERENCES USER_GRADE3 (GRADE_CODE) ON DELETE CASCADE
+);
+
+INSERT INTO USER_FOREIGNKEY3 VALUES(1,'USER01','PASS01', '홍길동', '남', '010-2323-2323', 'HONE@GMAIL.COM', 10);
+INSERT INTO USER_FOREIGNKEY3 VALUES(2,'USER02','PASS02', '길동', '남', '010-2323-2323', 'NE@GMAIL.COM', 20);
+INSERT INTO USER_FOREIGNKEY3 VALUES(3,'USER03','PASS03', '동', '남', '010-2323-2323', 'ONE@GMAIL.COM', 30);
+
+SELECT * FROM USER_FOREIGNKEY3;
+
+DELETE FROM USER_GRADE3 WHERE GRADE_CODE = 10;
+
+CREATE TABLE EMPLOYEE_COPY --임플로이테이블 카피 (데이터 전부 카피,카피->제약조건은 동일한데 기본키만 제외 되어 있음)
+AS
+SELECT E.*
+  FROM EMPLOYEE E;
+  
+SELECT * FROM EMPLOYEE_COPY; --필드 전부 카피(제약조건 제외)
+
+-- 제약조건 추가
+/*
+ALTER TABLE 테이블명 ADD PRIMARY KEY (컬럼명);
+ALTER TABLE 테이블명 ADD FOREIGN KEY (컬럼명)REFERENCES 테이블 (컬럼명);
+ALTER TABLE 테이블명 ADD UNIQUE (컬럼명);
+ALTER TABLE 테이블명 ADD CHECK (조건);
+ALTER TABLE 테이블명 MODIFY 컬렴명 [NOT] NULL;
+*/
+ALTER TABLE EMPLOYEE_COPY ADD PRIMARY KEY(EMP_ID); -- EMP_ID에다가 기본키를 EMPLOYEE_COPY에 추가해준다
+ALTER TABLE EMPLOYEE_COPY MODIFY EMP_NAME NOT NULL; --NOT NULL 제약조건을 NULL로 바꾸기
+
+ALTER TABLE DEPARTMENT ADD PRIMARY KEY(DEPT_ID);
+
+-- [실습]
+-- EMPLOYEE 테이블의 DEPT_CODE에 외래키 제약조건 추가
+-- 참조 테이블은 DEPARTMENT, 참조할 컬럼은 DEPARTMENT의 기본키
+ALTER TABLE EMPLOYEE ADD FOREIGN KEY (DEPT_CODE) REFERENCES DEPARTMENT(DEPT_ID);
+-- DEPARTMENT 테이블의 LOCATION_ID에 외래키 제약조건 추가
+-- 참조 테이블은 LOCATION, 참조 컬럼은 LOCATION의 기본키
+ALTER TABLE DEPARTMENT ADD FOREIGN KEY (LOCATION_ID) REFERENCES LOCATION(LOCAL_CODE);
+-- EMPLOYEE 테이블의 JOB_CODE에 외래키 제약조건 추가
+-- 참조 테이블은 JOB 테이블, 참조 컬럼은 JOB 테이블의 기본키
+ALTER TABLE EMPLOYEE ADD FOREIGN KEY (JOB_CODE) REFERENCES JOB(JOB_CODE);
+-- EMPLOYEE 테이블의 SAL_LEVEL에 외래키 제약조건 추가
+-- 참조 테이블은 SAL_GRADE 테이블, 참조 컬럼은 SAL_GRADE 테이블의 기본키
+ALTER TABLE EMPLOYEE ADD FOREIGN KEY (SAL_LEVEL) REFERENCES SAL_GRADE(SAL_LEVEL);
+-- EMPLOYEE 테이블의 ENT_YN 컬럼에 CHECK제약조건 추가 ('Y', 'N')
+-- 단, 대소문자를 구분하기 때문에 대문자로 설정할 것
+ALTER TABLE EMPLOYEE ADD CHECK (ENT_YN IN ('Y', 'N'));
+-- EMPLOYEE 테이블의 SALARY 컬럼에 CHECK제약조건 추가(양수)
+ALTER TABLE EMPLOYEE ADD CHECK (SALARY > 0);
+-- EMPLOYEE 테이블의 EMP_NO 컬럼에 UNIQUE 제약조건 추가
+ALTER TABLE EMPLOYEE ADD UNIQUE (EMP_NO);

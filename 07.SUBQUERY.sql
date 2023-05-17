@@ -30,7 +30,7 @@ SELECT
 2. 급여 평균을 구한다 AVG(SALARY) (SUBQUERY)
 3. 평균보다 많은 급여를 받는 직원을 조회한다 WHERE E.SALARY > (1~2 조건)
 4. 사번, 이름, 직급코드, 급여를 조회한다 SELECT
-*/
+*/ -- 단일행
 SELECT
         E.EMP_ID,
         E.EMP_NAME,
@@ -51,7 +51,7 @@ SELECT
 /* 다중열 서크쿼리 : 쿼리 결과가 다중 컬럼을 반환하는 서브쿼리 */
 /* 다중행 다중열 서브쿼리 */
 
-/* 문제1 (단일행)
+/* 문제1 
 노옹철 사원의 급여보다 많은 급여를 받는 직원의
 사번, 이름, 부서, 직급, 급여를 조회하세요
 
@@ -75,8 +75,8 @@ SELECT
         SUM(E.SALARY)
    FROM EMPLOYEE E
    LEFT JOIN DEPARTMENT D ON (E.DEPT_CODE = D.DEPT_ID)
-  GROUP BY D.DEPT_TITLE
- HAVING SUM(E.SALARY) = (SELECT MAX(SUM(E2.SALARY))
+  GROUP BY D.DEPT_TITLE --부서 이름을 기준으로 그룹을 묶어줘
+ HAVING SUM(E.SALARY) = (SELECT MAX(SUM(E2.SALARY)) 
                            FROM EMPLOYEE E2
                           GROUP BY DEPT_CODE);
 /* 문제2
@@ -94,7 +94,7 @@ SELECT
    FROM EMPLOYEE E
    JOIN JOB J ON(E.JOB_CODE = J.JOB_CODE)
   WHERE J.JOB_NAME = '대리'
-    AND E.SALARY > ANY(SELECT
+    AND E.SALARY > ANY(SELECT --ANY 최소값
                              SALARY
                         FROM EMPLOYEE
                         JOIN JOB USING(JOB_CODE)
@@ -161,7 +161,7 @@ SELECT
 1. 퇴사한 여직원(재직여부, 성별 여부)
 2. 퇴사한 여직원 부서, 직급
 3. 사원에 대한 정보 조회
-*/
+*/ -- 다중열
 -- 1번
 SELECT
         E2.DEPT_CODE,
@@ -189,7 +189,8 @@ SELECT
 /* 인라인 뷰 : 뷰 형태로 테이블을 반환하는 서브쿼리 
    FROM절에 서브쿼리를 사용할 수 있다
    가상의 테이블*/
-SELECT
+-- 직급별 급여가 평균 급여랑 같은 직원들을 조회해줘!
+SELECT 
         E.EMP_NAME,
         J.JOB_NAME,
         E.SALARY
@@ -197,12 +198,12 @@ SELECT
               , TRUNC(AVG(E2.SALARY), -5) AS JOBAVG
            FROM EMPLOYEE E2
           GROUP BY E2.JOB_CODE) V
-   JOIN EMPLOYEE E ON(V.JOBAVG = E.SALARY AND E.JOB_CODE = V.JOB_CODE)
-   JOIN JOB J ON(E.JOB_CODE = J.JOB_CODE)
+   JOIN EMPLOYEE E ON(V.JOBAVG = E.SALARY AND E.JOB_CODE = V.JOB_CODE) -- 직급별 급여 평균을 알 수 있음
+   JOIN JOB J ON(E.JOB_CODE = J.JOB_CODE) -- 직급을 알 수 있음(J.JOB_NAME)
   ORDER BY J.JOB_NAME;
-  
+-- 위에 FROM절 안에 있는 인라인뷰를 분리해서 따로 작성
 SELECT
-        V.*
+        V.JOBAVG
    FROM (SELECT E2.JOB_CODE
               , TRUNC(AVG(E2.SALARY), -5) AS JOBAVG
            FROM EMPLOYEE E2
@@ -354,7 +355,7 @@ SELECT
         E.MANAGER_ID,
         NVL((SELECT E2.EMP_NAME
                FROM EMPLOYEE E2
-              WHERE E.MANAGER_ID = E2.EMP_ID), '없음')
+              WHERE E.MANAGER_ID = E2.EMP_ID), '없음') AS 관리자명
   FROM EMPLOYEE E
  ORDER BY 1;
 
