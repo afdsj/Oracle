@@ -108,7 +108,7 @@ SELECT E.EMP_ID,
  4. EMP_OLD 테이블 삽입하기
  5. 2000년 1월 1일 이후에 입사한 사원은 EMP_NEW 삽입
  */ 
- --오류낭ㅅ!!!!!!!!!!!1
+
  CREATE TABLE EMP_OLD
  AS
  SELECT E.EMP_ID,

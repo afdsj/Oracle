@@ -201,6 +201,7 @@ SELECT
    JOIN EMPLOYEE E ON(V.JOBAVG = E.SALARY AND E.JOB_CODE = V.JOB_CODE) -- 직급별 급여 평균을 알 수 있음
    JOIN JOB J ON(E.JOB_CODE = J.JOB_CODE) -- 직급을 알 수 있음(J.JOB_NAME)
   ORDER BY J.JOB_NAME;
+  
 -- 위에 FROM절 안에 있는 인라인뷰를 분리해서 따로 작성
 SELECT
         V.JOBAVG
@@ -235,7 +236,7 @@ SELECT
         V.EMP_NAME,
         V.SALARY
    FROM (SELECT E.*
-           FROM EMPLOYEE E
+           FROM EMPLOYEFE E
           ORDER BY E.SALARY DESC) V
    WHERE ROWNUM <= 5;
 
