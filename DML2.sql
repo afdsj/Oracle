@@ -156,7 +156,7 @@ SELECT * FROM EMP_NEW;
 -- UPDATE : 테이블에 기록된 컬럼의 값을 수정하는 구문이다
 --          테이블의 전체 행 개수는 변화가 없다
 CREATE TABLE DEPT_COPY
-AS
+AS --별칭 X 이어지는 문구
 SELECT D.*
   FROM DEPARTMENT D;
 

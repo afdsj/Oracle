@@ -31,7 +31,7 @@ CREATE TABLE DEPT_COPY2
 AS
 SELECT *
   FROM DEPT_COPY;
-  
+
 SELECT * FROM DEPT_COPY2;
 
 ALTER TABLE DEPT_COPY2
@@ -52,10 +52,10 @@ MODIFY DEPT_TITLE VARCHAR(30)
 MODIFY LOCATION_ID VARCHAR(2);
 
 -- DEFUALT 값 변경
-ALTER TABLE DEPT_COPY
+ALTER TABLE DEPT_COPY2
 MODIFY CNAME DEFAULT '미국'; -- 기본값을 미국으로 수정
 
-SELECT * FROM DEPT_COPY;
+SELECT * FROM DEPT_COPY2;
 
 INSERT
   INTO DEPT_COPY
@@ -86,11 +86,14 @@ CREATE TABLE TB1(
  CHECK(PK > 0 AND COL1 > 0) --제약조건, -1,0,null 안됌
 );
 
+DROP TABLE TB1;-- 안지워짐 이유는 pk,fk연관되어 있어서
 ALTER TABLE TB1
-DROP COLUMN PK; -- 안지워짐 이유는 pk,fk연관되어 있어서
+DROP COLUMN PK; 
 
+-- 제약조건 삭제, PK 사라짐; 제약조건 명시 안해주면 다 사라짐 
+-- 데이터 무결성 때문에 제약 조건을 삭제한 이후에 테이블 삭제가 가능하다
 ALTER TABLE TB1
-DROP COLUMN PK CASCADE CONSTRAINT; -- 제약조건 삭제, PK 사라짐; 제약조건 명시 안해주면 다 사라짐 
+DROP COLUMN PK CASCADE CONSTRAINT; 
 
 SELECT *
   FROM TB1;
@@ -105,7 +108,7 @@ DROP (CNAME, DEPT_TITLE, LOCATION_ID); --다중열 삭제
 SELECT * FROM DEPT_COPY; --테이블의 값이 하나라도 남아 있어야 되서 남겨둠
 
 ROLLBACK; -- 테이블이 하나밖에 없음
---오류!!!
+
 CREATE TABLE CONST_EMP(              
   ENAME VARCHAR2(20) NOT NULL,
   ENO VARCHAR2(15) NOT NULL,

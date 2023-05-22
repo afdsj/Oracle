@@ -223,6 +223,7 @@ SELECT -- 가상의 테이블
            JOIN JOB J ON(E.JOB_CODE = J.JOB_CODE)
          ) V
    WHERE V.부서명 = '인사관리부'; 
+   
 -- 인라인뷰를 활용한 TOP-N분석
 SELECT
         ROWNUM, -- 가상의 컬럼
@@ -231,14 +232,14 @@ SELECT
    FROM EMPLOYEE E
   ORDER BY ROWNUM ASC;
         
-SELECT
-        ROWNUM, --컬럼에 인덱스
-        V.EMP_NAME,
-        V.SALARY
-   FROM (SELECT E.*
-           FROM EMPLOYEFE E
-          ORDER BY E.SALARY DESC) V
-   WHERE ROWNUM <= 5;
+SELECT 
+       ROWNUM --컬럼의 인덱스
+     , V.EMP_NAME
+     , V.SALARY
+  FROM (SELECT E.*
+          FROM EMPLOYEE E
+         ORDER BY E.SALARY DESC) V
+ WHERE ROWNUM <= 5;
 
 SELECT
         V2.RNUM,
@@ -335,7 +336,7 @@ SELECT
   WHERE EXISTS (SELECT 
                         E2.EMP_ID
                    FROM EMPLOYEE E2
-                  WHERE E.MANAGER_ID = E2.EMP_ID);
+                  WHERE E2.EMP_ID = E.MANAGER_ID);
 -- 스칼라 서브쿼리
 -- 단일행 서브쿼리 + 상관쿼리
 
