@@ -138,7 +138,7 @@ SELECT * FROM V_EMPLOYEE;
 -- 3. 산술표현식으로 정의된 경우
 -- 4. JOIN을 이용해 여러 테이블을 연결한 경우
 -- 5. DISTINCT 포함한 경우
--- 6. 그룹함수나 FROUP BY절을 포함한 경우
+-- 6. 그룹함수나 GROUP BY절을 포함한 경우
 
 -- 뷰 정의에 포함되지 않은 컬럼을 조작하는 경우
 CREATE OR REPLACE VIEW V_JOB2
@@ -254,7 +254,8 @@ SELECT TCODE,
        TNAME,
        TCONTENTS
   FROM TEST;
-  
+
+SELECT * FROM V_EMP2;
 -- WITH CHECK 옵션 : 컬럼의 값을 수정하지 못하게 한다
 -- WITH CHECK OPTION : 조건절에 사용된 컬럼의 값을 수정하지 못하게 한다
 CREATE OR REPLACE VIEW V_EMP3

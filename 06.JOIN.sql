@@ -55,7 +55,13 @@ SELECT
       , JOB_NAME
    FROM EMPLOYEE
    JOIN JOB USING(JOB_CODE);
-   
+
+SELECT
+        E.*,
+        D.*
+    FROM EMPLOYEE E
+    LEFT JOIN DEPARTMENT D ON (E.DEPT_CODE = D.DEPT_ID);
+
 -- 연결에 사용할 컬럼명이 다른 경우 ON()을 사용(SQL 공통적으로 사용되는 JOIN)
 SELECT
         EMP_ID
